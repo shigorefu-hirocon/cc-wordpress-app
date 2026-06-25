@@ -1,0 +1,9 @@
+.venv/
+.idea/
+.DS_Store
+credentials.json
+token.json
+sync_drive_*.log
+sync_drive_*.py
+WordPress/google_form_full_scan_*.json
+old_ms_form.json
