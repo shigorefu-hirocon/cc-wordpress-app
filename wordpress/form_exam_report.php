@@ -480,6 +480,13 @@
                 color: #164b73;
                 font-weight: bold;
             }
+            .exam-report-form .interview-question-note {
+                width: 100%;
+                color: #64748b;
+                font-size: 13px;
+                font-weight: bold;
+                line-height: 1.45;
+            }
             .exam-report-form .remove-interview-question {
                 align-self: end;
                 padding: 10px 16px;
@@ -1078,8 +1085,8 @@
                 <div class="interview-extra-questions"></div>
                 <div class="interview-question-controls">
                     <div class="interview-question-prompt">その他の質問はありましたか？</div>
-                    <button type="button" class="add-interview-question">はい</button>
-                    <button type="button" class="secondary-button no-interview-question">いいえ</button>
+                    <div class="interview-question-note">可能な範囲で追加の質問を入力してください。</div>
+                    <button type="button" class="add-interview-question">追加する</button>
                 </div>
 
                 <label>面接試験内容補足（書き方自由）</label>
@@ -1399,20 +1406,14 @@
                 const container = card.querySelector('.interview-extra-questions');
                 const controls = card.querySelector('.interview-question-controls');
                 const addButton = card.querySelector('.add-interview-question');
-                const noButton = card.querySelector('.no-interview-question');
 
-                if (!container || !controls || !addButton || !noButton) {
+                if (!container || !controls || !addButton) {
                     return;
                 }
 
                 addButton.addEventListener('click', function () {
                     addInterviewQuestion(container);
                     controls.style.display = container.children.length >= 3 ? 'none' : 'flex';
-                    updateExamPickerState();
-                });
-
-                noButton.addEventListener('click', function () {
-                    controls.style.display = 'none';
                     updateExamPickerState();
                 });
             }
