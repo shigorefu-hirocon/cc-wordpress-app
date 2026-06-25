@@ -671,6 +671,7 @@ function normalizeHeaderName_(headerName) {
   return headerName
     .toString()
     .trim()
+    .replace(/\[\]$/, "")
     .replace(/^[\u2460-\u246B]/, "")
     .replace(/\u2460/g, "1")
     .replace(/\u2461/g, "2")
