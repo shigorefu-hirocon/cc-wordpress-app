@@ -33,7 +33,7 @@ jobs:
           fi
           echo "deploy=true" >> "$GITHUB_OUTPUT"
 
-      - name: Validate clasp credentials
+      - name: Validate Apps Script credentials
         if: steps.gas-source.outputs.deploy == 'true'
         env:
           CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
@@ -44,44 +44,16 @@ jobs:
             exit 1
           fi
 
-      - name: Install clasp
-        if: steps.gas-source.outputs.deploy == 'true'
-        run: npm install --global @google/clasp
-
-      - name: Write clasp credentials
+      - name: Write Apps Script credentials
         if: steps.gas-source.outputs.deploy == 'true'
         env:
           CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
         run: printf '%s' "$CLASPRC_JSON" > "$HOME/.clasprc.json"
 
-      - name: Push to Apps Script
-        if: steps.gas-source.outputs.deploy == 'true'
-        working-directory: gas
-        run: |
-          for attempt in 1 2 3; do
-            if clasp push --force; then
-              exit 0
-            fi
-
-            echo "clasp push failed on attempt $attempt. Retrying..."
-            sleep 10
-          done
-
-          exit 1
-
       - name: Deploy Apps Script web app
         if: steps.gas-source.outputs.deploy == 'true'
         working-directory: gas
         env:
+          GAS_SCRIPT_ID: 1CdriYl4LWNudAkRhQiPnLuROWdtJiBG6fUwBpojWx4bePfUQykC_VXWx
           GAS_DEPLOYMENT_ID: AKfycbw-z6zP0K774d9jFyxE5noYQcelOfNJxCGxe71C312EFEL-_49yl5yzfqt7KjKFdxxs6A
-        run: |
-          for attempt in 1 2 3; do
-            if clasp deploy --deploymentId "$GAS_DEPLOYMENT_ID" --description "GitHub Actions $GITHUB_SHA"; then
-              exit 0
-            fi
-
-            echo "clasp deploy failed on attempt $attempt. Retrying..."
-            sleep 10
-          done
-
-          exit 1
+        run: node deploy-webapp.mjs
