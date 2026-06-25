@@ -2,7 +2,7 @@
         $submit_message = '';
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['exam_report_submit'])) {
-            $gas_url = 'https://script.google.com/macros/s/AKfycbyTPMCWwhWQXFV3r232XPv-Nhgm9Cu4rF7uoffnmFm8JGoIxnlyiBuoLkP4UrXFkqxm2g/exec';
+            $gas_url = 'https://script.google.com/macros/s/AKfycbw-z6zP0K774d9jFyxE5noYQcelOfNJxCGxe71C312EFEL-_49yl5yzfqt7KjKFdxxs6A/exec';
 
             $payload = exam_report_sanitize_post_data($_POST);
             unset($payload['exam_report_submit']);
