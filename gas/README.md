@@ -9,3 +9,5 @@ Required repository secret:
 Target Apps Script project:
 
 - `1CdriYl4LWNudAkRhQiPnLuROWdtJiBG6fUwBpojWx4bePfUQykC_VXWx`
+
+Last deploy trigger: 2026-06-25
