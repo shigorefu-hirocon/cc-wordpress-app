@@ -466,6 +466,28 @@
                 color: #64748b;
                 font-weight: 800;
             }
+            .exam-report-form .interview-question-controls {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+                align-items: center;
+                margin-top: 14px;
+                padding-top: 12px;
+                border-top: 1px solid #e2e8f0;
+            }
+            .exam-report-form .interview-question-prompt {
+                width: 100%;
+                color: #164b73;
+                font-weight: bold;
+            }
+            .exam-report-form .remove-interview-question {
+                align-self: end;
+                padding: 10px 16px;
+                background: #eef3f8;
+                color: #164b73;
+                border: 1px solid #bed0df;
+                box-shadow: none;
+            }
             .exam-report-form .char-counter {
                 margin-top: 5px;
                 text-align: right;
@@ -503,6 +525,10 @@
                 .exam-report-form .compact-row,
                 .exam-report-form .qa-pair {
                     grid-template-columns: 1fr;
+                }
+                .exam-report-form .interview-question-controls {
+                    align-items: stretch;
+                    flex-direction: column;
                 }
                 .exam-report-form .compact-row input,
                 .exam-report-form .unit-input input {
@@ -776,7 +802,7 @@
                     <legend>基本情報</legend>
 
                     <label>学籍番号</label>
-                    <input type="text" name="学籍番号" inputmode="numeric" pattern="[0-9]{7}" maxlength="7" title="7桁の半角数字で入力してください">
+                    <input type="text" id="student_number" name="学籍番号" inputmode="numeric" pattern="[0-9]{7}" maxlength="7" title="7桁の半角数字で入力してください" autocomplete="off">
 
                     <label>名前</label>
                     <input type="text" name="名前" placeholder="例：山田 太郎">
@@ -1049,37 +1075,11 @@
                 <label>自己ＰＲ</label>
                 <textarea name="②質問に対してどのように返答したか？＜自己ＰＲについて＞※簡潔にまとめて記述" maxlength="210" placeholder="質問に対してどのように返答したか？"></textarea>
 
-                <div class="qa-pair">
-                    <div>
-                        <label>質問1</label>
-                        <input type="text" name="質問1[]" maxlength="30" placeholder="質問された項目">
-                    </div>
-                    <div>
-                        <label class="soft-label">答え1</label>
-                        <textarea name="答え1[]" maxlength="85" placeholder="返答を記入"></textarea>
-                    </div>
-                </div>
-
-                <div class="qa-pair">
-                    <div>
-                        <label>質問2</label>
-                        <input type="text" name="質問2[]" maxlength="30" placeholder="質問された項目">
-                    </div>
-                    <div>
-                        <label class="soft-label">答え2</label>
-                        <textarea name="答え2[]" maxlength="85" placeholder="返答を記入"></textarea>
-                    </div>
-                </div>
-
-                <div class="qa-pair">
-                    <div>
-                        <label>質問3</label>
-                        <input type="text" name="質問3[]" maxlength="30" placeholder="質問された項目">
-                    </div>
-                    <div>
-                        <label class="soft-label">答え3</label>
-                        <textarea name="答え3[]" maxlength="85" placeholder="返答を記入"></textarea>
-                    </div>
+                <div class="interview-extra-questions"></div>
+                <div class="interview-question-controls">
+                    <div class="interview-question-prompt">その他の質問はありましたか？</div>
+                    <button type="button" class="add-interview-question">はい</button>
+                    <button type="button" class="secondary-button no-interview-question">いいえ</button>
                 </div>
 
                 <label>面接試験内容補足（書き方自由）</label>
@@ -1235,6 +1235,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.querySelector('.exam-report-form');
             const steps = document.querySelectorAll('.form-step');
+            const studentNumber = document.getElementById('student_number');
             const schoolName = document.getElementById('school_name');
             const hiroconOnlyFields = document.getElementById('hirocon_only_fields');
             const otherSchoolFields = document.getElementById('other_school_fields');
@@ -1327,6 +1328,14 @@
                 });
             }
 
+            function keepDigitsOnly(field, maxLength) {
+                const digits = field.value.replace(/\D/g, '').slice(0, maxLength);
+
+                if (field.value !== digits) {
+                    field.value = digits;
+                }
+            }
+
             function updateHiroconFields() {
                 const isHirocon = schoolName.value === '広島コンピュータ専門学校';
 
@@ -1377,12 +1386,88 @@
 
                 enhanceRadioArrayGroups(card, examCardSequence);
                 examSectionsContainer.appendChild(fragment);
+                initInterviewQuestionControls(card);
                 enhanceLabels(card);
                 setDefaultRequiredFields(card);
                 initCharacterCounters(card);
                 isChoosingExam = false;
                 updateExamPickerState();
                 card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            function initInterviewQuestionControls(card) {
+                const container = card.querySelector('.interview-extra-questions');
+                const controls = card.querySelector('.interview-question-controls');
+                const addButton = card.querySelector('.add-interview-question');
+                const noButton = card.querySelector('.no-interview-question');
+
+                if (!container || !controls || !addButton || !noButton) {
+                    return;
+                }
+
+                addButton.addEventListener('click', function () {
+                    addInterviewQuestion(container);
+                    controls.style.display = container.children.length >= 3 ? 'none' : 'flex';
+                    updateExamPickerState();
+                });
+
+                noButton.addEventListener('click', function () {
+                    controls.style.display = 'none';
+                    updateExamPickerState();
+                });
+            }
+
+            function addInterviewQuestion(container) {
+                const questionNumber = container.children.length + 1;
+
+                if (questionNumber > 3) {
+                    return;
+                }
+
+                const pair = document.createElement('div');
+                pair.className = 'qa-pair interview-extra-question';
+                pair.dataset.questionNumber = String(questionNumber);
+                pair.innerHTML = '' +
+                    '<div>' +
+                    '<label>質問' + questionNumber + '</label>' +
+                    '<input type="text" name="質問' + questionNumber + '[]" maxlength="30" placeholder="質問された項目" required>' +
+                    '</div>' +
+                    '<div>' +
+                    '<label class="soft-label">答え' + questionNumber + '</label>' +
+                    '<textarea name="答え' + questionNumber + '[]" maxlength="85" placeholder="返答を記入" required></textarea>' +
+                    '<button type="button" class="remove-interview-question">削除</button>' +
+                    '</div>';
+
+                container.appendChild(pair);
+                initCharacterCounters(pair);
+
+                pair.querySelector('.remove-interview-question').addEventListener('click', function () {
+                    pair.remove();
+                    renumberInterviewQuestions(container);
+
+                    const controls = container.parentElement.querySelector('.interview-question-controls');
+                    if (controls) {
+                        controls.style.display = 'flex';
+                    }
+
+                    updateExamPickerState();
+                });
+            }
+
+            function renumberInterviewQuestions(container) {
+                container.querySelectorAll('.interview-extra-question').forEach(function (pair, index) {
+                    const questionNumber = index + 1;
+                    const questionLabel = pair.querySelector('label');
+                    const questionInput = pair.querySelector('input');
+                    const answerLabel = pair.querySelector('.soft-label');
+                    const answerTextarea = pair.querySelector('textarea');
+
+                    pair.dataset.questionNumber = String(questionNumber);
+                    questionLabel.textContent = '質問' + questionNumber;
+                    questionInput.name = '質問' + questionNumber + '[]';
+                    answerLabel.textContent = '答え' + questionNumber;
+                    answerTextarea.name = '答え' + questionNumber + '[]';
+                });
             }
 
             function buildConfirmOutput() {
@@ -1619,6 +1704,14 @@
             });
 
             schoolName.addEventListener('change', updateHiroconFields);
+            studentNumber.addEventListener('input', function () {
+                keepDigitsOnly(studentNumber, 7);
+            });
+            studentNumber.addEventListener('paste', function () {
+                window.setTimeout(function () {
+                    keepDigitsOnly(studentNumber, 7);
+                }, 0);
+            });
             applyMethod.addEventListener('change', updateApplyMethod);
             examTypeButtons.forEach(function (button) {
                 button.addEventListener('click', function () {
@@ -1761,7 +1854,9 @@
                     return sanitize_textarea_field($item);
                 }, $value);
             } else {
-                $clean[$clean_key] = sanitize_textarea_field($value);
+                $clean[$clean_key] = $clean_key === '学籍番号'
+                    ? mb_substr(preg_replace('/\D/', '', $value), 0, 7)
+                    : sanitize_textarea_field($value);
             }
         }
 
