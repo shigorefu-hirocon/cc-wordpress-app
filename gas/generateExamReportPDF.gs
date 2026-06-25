@@ -319,7 +319,18 @@ function fillGroupDiscussion_(sheet, rowData) {
   sheet.getRange("O25").setValue(getValue_(rowData, "グループ人数"));
   sheet.getRange("S25").setValue(getValue_(rowData, "グループ数"));
   sheet.getRange("C26").setValue(getValue_(rowData, "テーマ"));
-  sheet.getRange("C27").setValue(getValue_(rowData, "実施感想および気づき ※簡潔にまとめて記述"));
+  sheet
+    .getRange("C27")
+    .setValue(
+      getFirstValue_(rowData, [
+        "実施感想および気づき ※簡潔にまとめて記述",
+        "実施感想および気付き ※簡潔にまとめて記述",
+        "実施感想および気づき",
+        "実施感想および気付き",
+        "実施気づき",
+        "実施気付き",
+      ]),
+    );
 }
 
 function fillWrittenExam_(sheet, rowData) {
@@ -692,6 +703,11 @@ function getHeaderAlias_(normalizedHeaderName) {
   const aliases = {
     "就職試験の感想（試験内容）および後輩へのアドバイス ※簡潔にまとめて記述": "就職試験の感想および後輩へのアドバイス",
     "就職試験の感想および後輩へのアドバイス": "就職試験の感想（試験内容）および後輩へのアドバイス ※簡潔にまとめて記述",
+    "実施感想および気付き ※簡潔にまとめて記述": "実施感想および気づき ※簡潔にまとめて記述",
+    "実施感想および気づき": "実施感想および気づき ※簡潔にまとめて記述",
+    "実施感想および気付き": "実施感想および気づき ※簡潔にまとめて記述",
+    "実施気づき": "実施感想および気づき ※簡潔にまとめて記述",
+    "実施気付き": "実施感想および気づき ※簡潔にまとめて記述",
   };
 
   return aliases[normalizedHeaderName] || "";
