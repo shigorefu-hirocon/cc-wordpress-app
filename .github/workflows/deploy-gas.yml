@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "gas/**"
+      - ".github/workflows/deploy-gas.yml"
   workflow_dispatch:
 
 jobs:
@@ -57,3 +58,10 @@ jobs:
         if: steps.gas-source.outputs.deploy == 'true'
         working-directory: gas
         run: clasp push --force
+
+      - name: Deploy Apps Script web app
+        if: steps.gas-source.outputs.deploy == 'true'
+        working-directory: gas
+        env:
+          GAS_DEPLOYMENT_ID: AKfycbyTPMCWwhWQXFV3r232XPv-Nhgm9Cu4rF7uoffnmFm8JGoIxnlyiBuoLkP4UrXFkqxm2g
+        run: clasp deploy --deploymentId "$GAS_DEPLOYMENT_ID" --description "GitHub Actions $GITHUB_SHA"
