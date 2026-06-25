@@ -1,0 +1,49 @@
+name: Deploy GAS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "gas/**"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Check GAS source
+        id: gas-source
+        working-directory: gas
+        run: |
+          if ! find . -maxdepth 1 -name "*.js" | grep -q .; then
+            echo "No GAS .js files found in gas/. Skipping deploy."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "deploy=true" >> "$GITHUB_OUTPUT"
+
+      - name: Install clasp
+        if: steps.gas-source.outputs.deploy == 'true'
+        run: npm install --global @google/clasp
+
+      - name: Write clasp credentials
+        if: steps.gas-source.outputs.deploy == 'true'
+        run: |
+          cat > "$HOME/.clasprc.json" <<'EOF'
+          ${{ secrets.CLASPRC_JSON }}
+          EOF
+
+      - name: Push to Apps Script
+        if: steps.gas-source.outputs.deploy == 'true'
+        working-directory: gas
+        run: clasp push --force
