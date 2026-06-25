@@ -1,4 +1,6 @@
 const SPREADSHEET_ID = "1AzvCp6NUZJ_xch5911sL7euOqy-Xi4wE4x18Bks0vqc";
+const TEST_CAREER_CENTER_MAIL = "eduard@hsc.ac.jp";
+const PRODUCTION_CAREER_CENTER_MAIL = "syushoku@ucs-hiroshima.ac.jp";
 
 function generatePdfsFromFormResponses(e) {
   processExamReport_(e, {
@@ -139,8 +141,7 @@ function createContext_() {
   const homeroomTeacherSheet = ss.getSheetByName("担任");
   const schoolMailAddressSheet = ss.getSheetByName("学校メールアドレス");
   const folder = DriveApp.getFolderById("1gj1OgWrn1JsONHFkNLrpu-gf9oGL704F");
-  // const careerCenterMail = "syushoku@ucs-hiroshima.ac.jp";
-  const careerCenterMail = "eduard@hsc.ac.jp";
+  const careerCenterMail = getCareerCenterMail_();
 
   if (!formResponsesSheet) throw new Error('シート「フォームの回答」が見つかりません。');
   if (!templateSheet) throw new Error('シート「テンプレート」が見つかりません。');
@@ -159,6 +160,16 @@ function createContext_() {
     teacherMailMap,
     careerCenterMail,
   };
+}
+
+function getCareerCenterMail_() {
+  const useProductionMail = PropertiesService
+    .getScriptProperties()
+    .getProperty("USE_PRODUCTION_CAREER_CENTER_MAIL") === "true";
+
+  return useProductionMail
+    ? PRODUCTION_CAREER_CENTER_MAIL
+    : TEST_CAREER_CENTER_MAIL;
 }
 
 function getSubmittedRowData_(sheet, e) {
