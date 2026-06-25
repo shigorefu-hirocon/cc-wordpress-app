@@ -1131,8 +1131,8 @@
                 <label>テーマ</label>
                 <input type="text" name="テーマ[]" maxlength="48">
 
-                <label>実施感想および気づき ※簡潔にまとめて記述</label>
-                <textarea name="実施感想および気づき ※簡潔にまとめて記述[]" maxlength="48"></textarea>
+                <label>実施感想および気づき</label>
+                <textarea name="実施感想および気づき[]" maxlength="48"></textarea>
 
                 <div class="exam-actions">
                     <button type="button" class="secondary-button remove-exam-card">この試験内容を削除</button>

@@ -319,7 +319,7 @@ function fillGroupDiscussion_(sheet, rowData) {
   sheet.getRange("O25").setValue(getValue_(rowData, "グループ人数"));
   sheet.getRange("S25").setValue(getValue_(rowData, "グループ数"));
   sheet.getRange("C26").setValue(getValue_(rowData, "テーマ"));
-  sheet.getRange("C27").setValue(getValue_(rowData, "実施感想および気づき ※簡潔にまとめて記述"));
+  sheet.getRange("C27").setValue(getValue_(rowData, "実施感想および気づき"));
 }
 
 function fillWrittenExam_(sheet, rowData) {
