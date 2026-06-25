@@ -1,7 +1,5 @@
 # GAS deployment
 
-Put Google Apps Script source files in this directory.
-
 GitHub Actions deploys this directory to Apps Script with `clasp push --force`.
 
 Required repository secret:
