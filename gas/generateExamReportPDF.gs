@@ -231,7 +231,7 @@ function fillBasicInfo_(sheet, rowData) {
 
   sheet.getRange("O7").setValue(getValue_(rowData, "受験場所"));
   sheet.getRange("C8").setValue(getValue_(rowData, "業種名"));
-  sheet.getRange("L8").setValue(getValue_(rowData, "応募職種 職種名"));
+  sheet.getRange("L8").setValue(getValue_(rowData, "職種名"));
 }
 
 function fillApplyMethod_(sheet, rowData) {

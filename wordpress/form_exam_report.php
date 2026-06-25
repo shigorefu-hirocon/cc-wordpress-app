@@ -892,7 +892,7 @@
                     <input type="text" name="業種名">
 
                     <label>応募職種 職種名</label>
-                    <input type="text" name="応募職種 職種名">
+                    <input type="text" name="職種名">
 
                     <label>応募方法</label>
                     <select id="apply_method" name="応募方法">
