@@ -258,7 +258,7 @@ function createCompanyDescriptionPdfFromSheet_(ss, sheet, folder, rowData) {
 }
 
 function buildCompanyDescriptionPdfName_(rowData) {
-  return `${sanitizeCompanyDescriptionFileName_(getCompanyDescriptionValue_(rowData, "訪問先"))}-${getCompanyDescriptionVisitDateText_(rowData)}-${sanitizeCompanyDescriptionFileName_(getCompanyDescriptionValue_(rowData, "学籍番号"))}.pdf`;
+  return `訪問-${sanitizeCompanyDescriptionFileName_(getCompanyDescriptionValue_(rowData, "訪問先"))}-${getCompanyDescriptionVisitDateText_(rowData)}-${sanitizeCompanyDescriptionFileName_(getCompanyDescriptionValue_(rowData, "学籍番号"))}.pdf`;
 }
 
 function buildCompanyDescriptionPdfExportUrl_(ss, sheet) {
@@ -340,7 +340,7 @@ function sendCompanyDescriptionStudentReportEmail_(pdfBlob, rowData) {
     return createCompanyDescriptionMailReportEntry_("学生", "", "skipped", "学生メールアドレスが未入力です。");
   }
 
-  const subject = "【企業訪問・企業説明会報告書確認】PDFを送付します";
+  const subject = "訪問-【企業訪問・企業説明会報告書確認】PDFを送付します";
   const body = `${studentName} さん\n\n企業訪問・企業説明会報告書のPDFを送付されました。\n内容を確認してください。\n\n※このメールは自動送信です。`;
 
   return sendCompanyDescriptionEmailWithReport_(studentMailTo, subject, body, pdfBlob, "学生");

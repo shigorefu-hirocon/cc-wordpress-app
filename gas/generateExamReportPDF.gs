@@ -396,7 +396,7 @@ function createPdfFromSheet_(ss, sheet, folder, rowData) {
 }
 
 function buildPdfName_(rowData) {
-  return `${sanitizeFileName_(getValue_(rowData, "受験先企業名"))}-${getExamDateText_(rowData)}-${sanitizeFileName_(getValue_(rowData, "学籍番号"))}.pdf`;
+  return `受験-${sanitizeFileName_(getValue_(rowData, "受験先企業名"))}-${getExamDateText_(rowData)}-${sanitizeFileName_(getValue_(rowData, "学籍番号"))}.pdf`;
 }
 
 function buildPdfExportUrl_(ss, sheet) {
@@ -464,7 +464,7 @@ function sendCareerCenterReportEmail_(pdfBlob, rowData, careerCenterMail) {
     return createMailReportEntry_("就職センター", "", "skipped", "就職センターメールアドレスが未設定です。");
   }
 
-  const subject = `${getValue_(rowData, "受験先企業名")}-${getExamDateText_(rowData)}-${getValue_(rowData, "学籍番号")}`;
+  const subject = `受験-${getValue_(rowData, "受験先企業名")}-${getExamDateText_(rowData)}-${getValue_(rowData, "学籍番号")}`;
   const body = `コース：${getValue_(rowData, "コース名")}\n名前：${getValue_(rowData, "名前")}\n学籍番号：${getValue_(rowData, "学籍番号")}`;
 
   return sendEmailWithReport_(careerCenterMail, subject, body, pdfBlob, "就職センター");
@@ -478,7 +478,7 @@ function sendStudentReportEmail_(pdfBlob, rowData) {
     return createMailReportEntry_("学生", "", "skipped", "学生メールアドレスが未入力です。");
   }
 
-  const subject = "【就職試験報告書確認】PDFを送付します";
+  const subject = "受験-【就職試験報告書確認】PDFを送付します";
   const body = `${studentName} さん\n\n就職試験報告書のPDFを送付されました。\n内容を確認してください。\n\n※このメールは自動送信です。`;
 
   return sendEmailWithReport_(studentMailTo, subject, body, pdfBlob, "学生");
