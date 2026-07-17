@@ -175,6 +175,7 @@ function sendCertificateEmails_(rowData, schoolMailMap, teacherMailMap, careerCe
     sendCertificateSchoolEmail_(rowData, schoolMailMap),
     sendCertificateTeacherEmail_(rowData, teacherMailMap),
     sendCertificateCareerCenterEmail_(rowData, careerCenterMail),
+    sendCertificateStudentEmail_(rowData),
   ];
 }
 
@@ -186,7 +187,7 @@ function sendCertificateSchoolEmail_(rowData, schoolMailMap) {
     return createCertificateMailReportEntry_("学校", "", "skipped", "学校メールアドレスが未登録です。");
   }
 
-  return sendCertificateEmail_(to, buildCertificateSubject_(rowData), buildCertificateMailBody_(rowData), "学校");
+  return sendCertificateEmail_(to, buildCertificateSubject_(rowData), buildCertificateStaffMailBody_(rowData), "学校");
 }
 
 function sendCertificateTeacherEmail_(rowData, teacherMailMap) {
@@ -197,7 +198,7 @@ function sendCertificateTeacherEmail_(rowData, teacherMailMap) {
     return createCertificateMailReportEntry_("担任", "", "skipped", "担任メールアドレスが未登録です。");
   }
 
-  return sendCertificateEmail_(to, buildCertificateSubject_(rowData), buildCertificateMailBody_(rowData), "担任");
+  return sendCertificateEmail_(to, buildCertificateSubject_(rowData), buildCertificateStaffMailBody_(rowData), "担任");
 }
 
 function sendCertificateCareerCenterEmail_(rowData, careerCenterMail) {
@@ -205,7 +206,17 @@ function sendCertificateCareerCenterEmail_(rowData, careerCenterMail) {
     return createCertificateMailReportEntry_("就職センター", "", "skipped", "就職センターメールアドレスが未設定です。");
   }
 
-  return sendCertificateEmail_(careerCenterMail, buildCertificateSubject_(rowData), buildCertificateMailBody_(rowData), "就職センター");
+  return sendCertificateEmail_(careerCenterMail, buildCertificateSubject_(rowData), buildCertificateStaffMailBody_(rowData), "就職センター");
+}
+
+function sendCertificateStudentEmail_(rowData) {
+  const to = getCertificateValue_(rowData, "メールアドレス").toString().trim();
+
+  if (!to) {
+    return createCertificateMailReportEntry_("学生", "", "skipped", "学生メールアドレスが未入力です。");
+  }
+
+  return sendCertificateEmail_(to, "証明書申請を受け付けました", buildCertificateStudentMailBody_(rowData), "学生");
 }
 
 function sendCertificateEmail_(to, subject, body, recipientType) {
@@ -225,6 +236,25 @@ function sendCertificateEmail_(to, subject, body, recipientType) {
 
 function buildCertificateSubject_(rowData) {
   return `証明書申請-${getCertificateValue_(rowData, "名前")}-${getCertificateValue_(rowData, "学籍番号")}`;
+}
+
+function buildCertificateStaffMailBody_(rowData) {
+  return `書類の申し込みがありました。\n\n${buildCertificateMailBody_(rowData)}`;
+}
+
+function buildCertificateStudentMailBody_(rowData) {
+  return [
+    "証明書申請を受け付けました。",
+    "以下の内容で申込みメールを送信しました。",
+    "",
+    buildCertificateMailBody_(rowData),
+    "",
+    `申込みから２日後（${getCertificateReceiveDateText_()}）、在学校の事務局にて受取りができます。`,
+    "受取りの際は、『学生証』を提示してください。",
+    "発行手数料は、後日、口座振替にてお支払いください。",
+    "※事務局受付時間：平日 8:30～17:00",
+    "※受取日は自動計算です。土日祝日にあたる場合は、翌営業日の日付を表示しています。",
+  ].join("\n");
 }
 
 function buildCertificateMailBody_(rowData) {
@@ -305,6 +335,38 @@ function formatCertificateMonthDay_(value) {
   if (!date) return value || "";
 
   return Utilities.formatDate(date, Session.getScriptTimeZone(), "MM月dd日");
+}
+
+function getCertificateReceiveDateText_() {
+  const date = new Date();
+  date.setDate(date.getDate() + 2);
+
+  while (!isCertificateBusinessDay_(date)) {
+    date.setDate(date.getDate() + 1);
+  }
+
+  return Utilities.formatDate(date, Session.getScriptTimeZone(), "MM月dd日");
+}
+
+function isCertificateBusinessDay_(date) {
+  const day = date.getDay();
+
+  if (day === 0 || day === 6) return false;
+
+  return !isCertificateJapaneseHoliday_(date);
+}
+
+function isCertificateJapaneseHoliday_(date) {
+  try {
+    const holidayCalendar = CalendarApp.getCalendarById("ja.japanese#holiday@group.v.calendar.google.com");
+    if (!holidayCalendar) return false;
+
+    const events = holidayCalendar.getEventsForDay(date);
+    return events.length > 0;
+  } catch (error) {
+    console.error(error.stack || error.message || error);
+    return false;
+  }
 }
 
 function parseCertificateDate_(value) {
