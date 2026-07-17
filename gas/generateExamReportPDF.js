@@ -47,6 +47,10 @@ function routeWebhook_(e) {
     return handleCompanyDescriptionWebhook_(e);
   }
 
+  if (isCertificatePayload_(rowData)) {
+    return handleCertificateWebhook_(e);
+  }
+
   return handleWebhook_(e);
 }
 
@@ -66,6 +70,10 @@ function parseRouteRowData_(e) {
 
 function isCompanyDescriptionPayload_(rowData) {
   return rowData["レポート種別"] === "企業訪問・企業説明会報告書" || Boolean(rowData["訪問先"]);
+}
+
+function isCertificatePayload_(rowData) {
+  return rowData["申請種別"] === "証明書発行申請" || Boolean(rowData["選択した証明書"]);
 }
 
 function createRouteJsonResponse_(payload) {

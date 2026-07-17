@@ -26,8 +26,8 @@ jobs:
         id: gas-source
         working-directory: gas
         run: |
-          if ! find . -maxdepth 1 -name "*.gs" | grep -q .; then
-            echo "No GAS .gs files found in gas/. Skipping deploy."
+          if ! find . -maxdepth 1 -name "*.js" | grep -q .; then
+            echo "No GAS .js files found in gas/. Skipping deploy."
             echo "deploy=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi

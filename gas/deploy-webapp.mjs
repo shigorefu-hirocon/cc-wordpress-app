@@ -63,11 +63,11 @@ function readAppsScriptFiles_(directory) {
   ];
 
   fs.readdirSync(directory)
-    .filter((fileName) => fileName.endsWith(".gs"))
+    .filter((fileName) => fileName.endsWith(".js"))
     .sort()
     .forEach((fileName) => {
       files.push({
-        name: fileName.replace(/\.gs$/, ""),
+        name: fileName.replace(/\.js$/, ""),
         type: "SERVER_JS",
         source: fs.readFileSync(path.join(directory, fileName), "utf8"),
       });

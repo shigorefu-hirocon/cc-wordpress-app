@@ -3,7 +3,64 @@ add_shortcode('certificate-form', function () {
     $submit_message = '';
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['certificate_form_submit'])) {
-        $submit_message = '<div class="certificate-submit-message success">テストが完了しました。</div>';
+        $gas_url = 'https://script.google.com/macros/s/AKfycbw-z6zP0K774d9jFyxE5noYQcelOfNJxCGxe71C312EFEL-_49yl5yzfqt7KjKFdxxs6A/exec';
+
+        $payload = certificate_sanitize_post_data($_POST);
+        unset($payload['certificate_form_submit']);
+        $payload['申請種別'] = '証明書発行申請';
+
+        $request_args = [
+            'headers' => [
+                'User-Agent' => 'WordPress Certificate Form',
+            ],
+            'body' => [
+                'payload' => wp_json_encode($payload, JSON_UNESCAPED_UNICODE),
+            ],
+            'timeout' => 30,
+            'redirection' => 0,
+        ];
+
+        $response = wp_remote_post($gas_url, $request_args);
+        $redirect_url = '';
+
+        if (!is_wp_error($response)) {
+            $code = wp_remote_retrieve_response_code($response);
+            $location = wp_remote_retrieve_header($response, 'location');
+
+            if ($code >= 300 && $code < 400 && $location) {
+                $redirect_url = $location;
+                $response = wp_remote_get($location, [
+                    'headers' => [
+                        'User-Agent' => 'WordPress Certificate Form',
+                    ],
+                    'timeout' => 30,
+                    'redirection' => 5,
+                ]);
+            }
+        }
+
+        if (is_wp_error($response)) {
+            $submit_message = '<div class="certificate-submit-message error">送信失敗: WordPress HTTP Error<br>' . esc_html($response->get_error_message()) . '</div>';
+        } else {
+            $code = wp_remote_retrieve_response_code($response);
+            $body = wp_remote_retrieve_body($response);
+
+            if ($code >= 200 && $code < 300) {
+                $decoded_body = json_decode($body, true);
+
+                if (is_array($decoded_body) && isset($decoded_body['ok']) && $decoded_body['ok'] === true) {
+                    $submit_message = '<div class="certificate-submit-message success">送信が完了しました。</div>';
+                } elseif (is_array($decoded_body) && isset($decoded_body['ok']) && $decoded_body['ok'] === false) {
+                    $submit_message = '<div class="certificate-submit-message error">GAS処理失敗:<br>' . esc_html($body) . '</div>';
+                } else {
+                    $submit_message = '<div class="certificate-submit-message error">GAS処理失敗: JSON応答を確認できません。<br><pre style="white-space:pre-wrap;">' . esc_html(mb_substr($body, 0, 1500)) . '</pre></div>';
+                }
+            } else {
+                $headers = wp_remote_retrieve_headers($response);
+                $debug_url = $redirect_url ? $redirect_url : $gas_url;
+                $submit_message = '<div class="certificate-submit-message error">送信失敗: HTTP ' . esc_html($code) . '<br><pre style="white-space:pre-wrap;">URL: ' . esc_html(mb_substr($debug_url, 0, 500)) . "\n\n" . esc_html(print_r($headers, true)) . '</pre><br>' . esc_html(mb_substr($body, 0, 1000)) . '</div>';
+            }
+        }
     }
 
     ob_start();
@@ -577,6 +634,9 @@ add_shortcode('certificate-form', function () {
                 <label>名前</label>
                 <input type="text" name="名前" placeholder="例：山田 太郎" required>
 
+                <label>生年月日</label>
+                <input type="date" name="生年月日" required>
+
                 <label>メールアドレス</label>
                 <input type="email" name="メールアドレス" placeholder="例：student@example.com" required>
 
@@ -1119,6 +1179,7 @@ add_shortcode('certificate-form', function () {
 
             addRow('学籍番号', getFieldValue('学籍番号'));
             addRow('名前', getFieldValue('名前'));
+            addRow('生年月日', getFieldValue('生年月日'));
             addRow('メールアドレス', getFieldValue('メールアドレス'));
             addRow('電話番号', getFieldValue('電話番号'));
             addRow('電話番号（数字のみ）', getFieldValue('電話番号（数字のみ）'));
@@ -1305,7 +1366,7 @@ add_shortcode('certificate-form', function () {
                 const isSuccess = serverMessage && serverMessage.classList.contains('success');
 
                 if (isSuccess) {
-                    setSubmitState('success', 'テストが完了しました。');
+                    setSubmitState('success', '送信が完了しました。');
                     resetAppForm();
 
                     window.setTimeout(function () {
@@ -1349,3 +1410,23 @@ add_shortcode('certificate-form', function () {
     <?php
     return ob_get_clean();
 });
+
+if (!function_exists('certificate_sanitize_post_data')) {
+    function certificate_sanitize_post_data($data) {
+        $sanitized = [];
+
+        foreach ($data as $key => $value) {
+            $clean_key = sanitize_text_field(wp_unslash($key));
+
+            if (is_array($value)) {
+                $sanitized[$clean_key] = array_map(function ($item) {
+                    return sanitize_textarea_field(wp_unslash($item));
+                }, $value);
+            } else {
+                $sanitized[$clean_key] = sanitize_textarea_field(wp_unslash($value));
+            }
+        }
+
+        return $sanitized;
+    }
+}
