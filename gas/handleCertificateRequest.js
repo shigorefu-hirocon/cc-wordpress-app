@@ -253,7 +253,7 @@ function buildCertificateStudentMailBody_(rowData) {
     "受取りの際は、『学生証』を提示してください。",
     "発行手数料は、後日、口座振替にてお支払いください。",
     "※事務局受付時間：平日 8:30～17:00",
-    "※受取日は自動計算です。土日祝日にあたる場合は、翌営業日の日付を表示しています。",
+    "※受取日は自動計算です。土日祝日にあたる場合は、翌営業日にお越しください。",
   ].join("\n");
 }
 
@@ -341,32 +341,7 @@ function getCertificateReceiveDateText_() {
   const date = new Date();
   date.setDate(date.getDate() + 2);
 
-  while (!isCertificateBusinessDay_(date)) {
-    date.setDate(date.getDate() + 1);
-  }
-
   return Utilities.formatDate(date, Session.getScriptTimeZone(), "MM月dd日");
-}
-
-function isCertificateBusinessDay_(date) {
-  const day = date.getDay();
-
-  if (day === 0 || day === 6) return false;
-
-  return !isCertificateJapaneseHoliday_(date);
-}
-
-function isCertificateJapaneseHoliday_(date) {
-  try {
-    const holidayCalendar = CalendarApp.getCalendarById("ja.japanese#holiday@group.v.calendar.google.com");
-    if (!holidayCalendar) return false;
-
-    const events = holidayCalendar.getEventsForDay(date);
-    return events.length > 0;
-  } catch (error) {
-    console.error(error.stack || error.message || error);
-    return false;
-  }
 }
 
 function parseCertificateDate_(value) {
