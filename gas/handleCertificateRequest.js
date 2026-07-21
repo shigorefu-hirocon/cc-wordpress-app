@@ -91,7 +91,7 @@ function normalizeCertificateRowData_(rowData) {
   });
 
   normalized["申請種別"] = "証明書発行申請";
-  normalized["送信日時"] = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy/MM/dd HH:mm:ss");
+  normalized["送信日時"] = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy年MM月dd日 HH時mm分");
 
   return normalized;
 }
@@ -239,11 +239,23 @@ function buildCertificateSubject_(rowData) {
 }
 
 function buildCertificateStaffMailBody_(rowData) {
-  return `書類の申し込みがありました。\n\n${buildCertificateMailBody_(rowData)}`;
+  return [
+    getCertificateApplicationDateTime_(rowData),
+    "",
+    "",
+    "",
+    "書類の申し込みがありました。",
+    "",
+    buildCertificateMailBody_(rowData),
+  ].join("\n");
 }
 
 function buildCertificateStudentMailBody_(rowData) {
   return [
+    getCertificateApplicationDateTime_(rowData),
+    "",
+    "",
+    "",
     "証明書申請を受け付けました。",
     "以下の内容で申込みメールを送信しました。",
     "",
@@ -255,6 +267,11 @@ function buildCertificateStudentMailBody_(rowData) {
     "※事務局受付時間：平日 8:30～17:00",
     "※受取日は自動計算です。土日祝日にあたる場合は、翌営業日にお越しください。",
   ].join("\n");
+}
+
+function getCertificateApplicationDateTime_(rowData) {
+  return getCertificateValue_(rowData, "送信日時")
+    || Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy年MM月dd日 HH時mm分");
 }
 
 function buildCertificateMailBody_(rowData) {
