@@ -240,11 +240,12 @@ function buildCertificateSubject_(rowData) {
 
 function buildCertificateStaffMailBody_(rowData) {
   return [
+    "書類の申し込みがありました。",
+    "----------------------------------------",
+    "",
     getCertificateApplicationDateTime_(rowData),
     "",
     "",
-    "",
-    "書類の申し込みがありました。",
     "",
     buildCertificateMailBody_(rowData),
   ].join("\n");
