@@ -825,9 +825,6 @@ add_shortcode('certificate-form', function () {
             <fieldset id="certificate_employment_fields" class="hidden-section">
                 <legend>就職用 詳細</legend>
 
-                <label>求人番号 <span class="help-tip" tabindex="0" role="img" aria-label="学校求人の場合のみ記入" data-tip="学校求人の場合のみ記入">?</span></label>
-                <input type="text" name="求人番号">
-
                 <label>受験先企業名</label>
                 <input type="text" name="受験先企業名">
 
@@ -1188,7 +1185,6 @@ add_shortcode('certificate-form', function () {
             addRow('担任', getFieldValue('担任'));
             addRow('使用目的', getFieldValue('使用目的'));
             addRow('選択した証明書', selectedDocumentsInput.value);
-            addRow('求人番号', getFieldValue('求人番号'));
             addRow('受験先企業名', getFieldValue('受験先企業名'));
             addRow('担任名', getFieldValue('担任名'));
             addRow('書類提出日', getFieldValue('書類提出日'));
