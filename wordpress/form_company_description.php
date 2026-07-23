@@ -544,10 +544,11 @@ add_shortcode('company_description_form', function () {
                     </select>
                     <select id="company_biyo_course_name_select" name="コース名" style="display: none;">
                         <option value="">選択してください</option>
-                        <option>トータルビューティ科 ヘアメイクコース</option>
-                        <option>トータルビューティ科 メイクアップコース</option>
-                        <option>トータルビューティ科 ネイルコース</option>
-                        <option>トータルビューティ科 エステティックコース</option>
+                        <option>美容科</option>
+                        <option>トータルビューティ科 | ヘアメイクコース</option>
+                        <option>トータルビューティ科 | メイクアップコース</option>
+                        <option>トータルビューティ科 | ネイルコース</option>
+                        <option>トータルビューティ科 | エステティックコース</option>
                     </select>
                     <select id="company_hjb_course_name_select" name="コース名" style="display: none;">
                         <option value="">選択してください</option>
