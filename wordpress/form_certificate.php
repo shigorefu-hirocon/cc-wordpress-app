@@ -688,6 +688,15 @@ add_shortcode('certificate-form', function () {
                 <div id="certificate_other_school_fields">
                     <label>コース名</label>
                     <input type="text" id="certificate_course_name_text" name="コース名">
+                    <select id="certificate_hiroka_course_name_select" name="コース名" style="display: none;">
+                        <option value="">選択してください</option>
+                        <option>医療事務コース</option>
+                        <option>フラワーデザイナーコース</option>
+                        <option>経理財務コース</option>
+                        <option>税理士マスターコース</option>
+                        <option>税理士コース</option>
+                        <option>どこでもコース</option>
+                    </select>
 
                     <label>担任</label>
                     <input type="text" id="certificate_teacher_name_text" name="担任">
@@ -904,6 +913,7 @@ add_shortcode('certificate-form', function () {
         const hiroconOnlyFields = document.getElementById('certificate_hirocon_only_fields');
         const otherSchoolFields = document.getElementById('certificate_other_school_fields');
         const courseNameSelect = document.getElementById('certificate_course_name_select');
+        const hirokaCourseNameSelect = document.getElementById('certificate_hiroka_course_name_select');
         const teacherNameSelect = document.getElementById('certificate_teacher_name_select');
         const courseNameText = document.getElementById('certificate_course_name_text');
         const teacherNameText = document.getElementById('certificate_teacher_name_text');
@@ -976,6 +986,7 @@ add_shortcode('certificate-form', function () {
 
         function updateHiroconFields() {
             const isHirocon = schoolName.value === '広島コンピュータ専門学校';
+            const isHiroka = schoolName.value === '広島会計学院ビジネス専門学校';
 
             setSectionVisibility(hiroconOnlyFields, isHirocon);
             setSectionVisibility(otherSchoolFields, !isHirocon);
@@ -985,17 +996,28 @@ add_shortcode('certificate-form', function () {
             courseNameSelect.disabled = !isHirocon;
             teacherNameSelect.disabled = !isHirocon;
 
-            courseNameText.required = !isHirocon;
+            courseNameText.required = !isHirocon && !isHiroka;
+            courseNameText.disabled = isHirocon || isHiroka;
+            courseNameText.style.display = isHiroka ? 'none' : '';
+
+            hirokaCourseNameSelect.required = isHiroka;
+            hirokaCourseNameSelect.disabled = !isHiroka;
+            hirokaCourseNameSelect.style.display = isHiroka ? '' : 'none';
+
             teacherNameText.required = !isHirocon;
-            courseNameText.disabled = isHirocon;
             teacherNameText.disabled = isHirocon;
 
             if (isHirocon) {
                 courseNameText.value = '';
+                hirokaCourseNameSelect.value = '';
                 teacherNameText.value = '';
             } else {
                 courseNameSelect.value = '';
                 teacherNameSelect.value = '';
+
+                if (!isHiroka) {
+                    hirokaCourseNameSelect.value = '';
+                }
             }
         }
 
