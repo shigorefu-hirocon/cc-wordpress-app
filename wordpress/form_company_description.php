@@ -525,7 +525,6 @@ add_shortcode('company_description_form', function () {
 
                 <div id="company_other_school_fields">
                     <label>コース名</label>
-                    <input type="text" id="company_course_name_text" name="コース名">
                     <select id="company_hiroka_course_name_select" name="コース名" style="display: none;">
                         <option value="">選択してください</option>
                         <option>医療事務コース</option>
@@ -533,6 +532,37 @@ add_shortcode('company_description_form', function () {
                         <option>経理財務コース</option>
                         <option>税理士マスターコース</option>
                         <option>税理士コース</option>
+                    </select>
+                    <select id="company_gaigo_course_name_select" name="コース名" style="display: none;">
+                        <option value="">選択してください</option>
+                        <option>総合英語コース</option>
+                        <option>海外留学コース</option>
+                        <option>国内大学編入コース</option>
+                        <option>エアラインコース</option>
+                        <option>ホテルコース</option>
+                        <option>国際ビジネスコース</option>
+                    </select>
+                    <select id="company_biyo_course_name_select" name="コース名" style="display: none;">
+                        <option value="">選択してください</option>
+                        <option>美容科</option>
+                        <option>トータルビューティ科 ヘアメイクコース</option>
+                        <option>トータルビューティ科 メイクアップコース</option>
+                        <option>トータルビューティ科 ネイルコース</option>
+                        <option>トータルビューティ科 エステティックコース</option>
+                    </select>
+                    <select id="company_hjb_course_name_select" name="コース名" style="display: none;">
+                        <option value="">選択してください</option>
+                        <option>医療秘書コース</option>
+                        <option>ブライダルコーディネーターコース</option>
+                        <option>ペットビジネスコース</option>
+                        <option>ペットケア＆トレーニングコース</option>
+                        <option>情報ビジネスコース</option>
+                        <option>販売ビジネスコース</option>
+                    </select>
+                    <select id="company_uhk_course_name_select" name="コース名" style="display: none;">
+                        <option value="">選択してください</option>
+                        <option>公務員科</option>
+                        <option>公務員速成科</option>
                     </select>
 
                     <label>担任</label>
@@ -693,8 +723,11 @@ add_shortcode('company_description_form', function () {
         const otherSchoolFields = document.getElementById('company_other_school_fields');
         const courseNameSelect = document.getElementById('company_course_name_select');
         const hirokaCourseNameSelect = document.getElementById('company_hiroka_course_name_select');
+        const gaigoCourseNameSelect = document.getElementById('company_gaigo_course_name_select');
+        const biyoCourseNameSelect = document.getElementById('company_biyo_course_name_select');
+        const hjbCourseNameSelect = document.getElementById('company_hjb_course_name_select');
+        const uhkCourseNameSelect = document.getElementById('company_uhk_course_name_select');
         const teacherNameSelect = document.getElementById('company_teacher_name_select');
-        const courseNameText = document.getElementById('company_course_name_text');
         const teacherNameText = document.getElementById('company_teacher_name_text');
 
         const venueRadios = form.querySelectorAll('input[name="会場"]');
@@ -757,9 +790,23 @@ add_shortcode('company_description_form', function () {
     updateAllCharacterCounters();
 }
 
+        function configureSchoolCourseSelect(select, isVisible) {
+            select.required = isVisible;
+            select.disabled = !isVisible;
+            select.style.display = isVisible ? '' : 'none';
+
+            if (!isVisible) {
+                select.value = '';
+            }
+        }
+
         function updateHiroconFields() {
             const isHirocon = schoolName.value === '広島コンピュータ専門学校';
             const isHiroka = schoolName.value === '広島会計学院ビジネス専門学校';
+            const isGaigo = schoolName.value === '広島外語専門学校';
+            const isBiyo = schoolName.value === '広島美容専門学校';
+            const isHjb = schoolName.value === '広島情報ビジネス専門学校';
+            const isUhk = schoolName.value === '広島公務員専門学校';
 
             setSectionVisibility(hiroconOnlyFields, isHirocon);
             setSectionVisibility(otherSchoolFields, !isHirocon);
@@ -769,28 +816,20 @@ add_shortcode('company_description_form', function () {
             courseNameSelect.disabled = !isHirocon;
             teacherNameSelect.disabled = !isHirocon;
 
-            courseNameText.required = !(isHirocon || isHiroka);
-            courseNameText.disabled = isHirocon || isHiroka;
-            courseNameText.style.display = isHiroka ? 'none' : '';
-
-            hirokaCourseNameSelect.required = isHiroka;
-            hirokaCourseNameSelect.disabled = !isHiroka;
-            hirokaCourseNameSelect.style.display = isHiroka ? '' : 'none';
+            configureSchoolCourseSelect(hirokaCourseNameSelect, isHiroka);
+            configureSchoolCourseSelect(gaigoCourseNameSelect, isGaigo);
+            configureSchoolCourseSelect(biyoCourseNameSelect, isBiyo);
+            configureSchoolCourseSelect(hjbCourseNameSelect, isHjb);
+            configureSchoolCourseSelect(uhkCourseNameSelect, isUhk);
 
             teacherNameText.required = !isHirocon;
             teacherNameText.disabled = isHirocon;
 
             if (isHirocon) {
-                courseNameText.value = '';
-                hirokaCourseNameSelect.value = '';
                 teacherNameText.value = '';
             } else {
                 courseNameSelect.value = '';
                 teacherNameSelect.value = '';
-
-                if (!isHiroka) {
-                    hirokaCourseNameSelect.value = '';
-                }
             }
         }
 
