@@ -695,7 +695,6 @@ add_shortcode('certificate-form', function () {
                         <option>経理財務コース</option>
                         <option>税理士マスターコース</option>
                         <option>税理士コース</option>
-                        <option>どこでもコース</option>
                     </select>
 
                     <label>担任</label>

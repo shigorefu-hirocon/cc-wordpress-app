@@ -861,6 +861,14 @@
                     <div id="other_school_fields">
                         <label>コース名</label>
                         <input type="text" id="course_name_text" name="コース名">
+                        <select id="hiroka_course_name_select" name="コース名" style="display: none;">
+                            <option value="">選択してください</option>
+                            <option>医療事務コース</option>
+                            <option>フラワーデザイナーコース</option>
+                            <option>経理財務コース</option>
+                            <option>税理士マスターコース</option>
+                            <option>税理士コース</option>
+                        </select>
 
                         <label>担任</label>
                         <input type="text" id="teacher_name_text" name="担任">
@@ -1247,6 +1255,7 @@
             const hiroconOnlyFields = document.getElementById('hirocon_only_fields');
             const otherSchoolFields = document.getElementById('other_school_fields');
             const courseNameSelect = document.getElementById('course_name_select');
+            const hirokaCourseNameSelect = document.getElementById('hiroka_course_name_select');
             const teacherNameSelect = document.getElementById('teacher_name_select');
             const courseNameText = document.getElementById('course_name_text');
             const teacherNameText = document.getElementById('teacher_name_text');
@@ -1345,6 +1354,7 @@
 
             function updateHiroconFields() {
                 const isHirocon = schoolName.value === '広島コンピュータ専門学校';
+                const isHiroka = schoolName.value === '広島会計学院ビジネス専門学校';
 
                 setSectionVisibility(hiroconOnlyFields, isHirocon);
                 setSectionVisibility(otherSchoolFields, !isHirocon);
@@ -1354,17 +1364,28 @@
                 courseNameSelect.disabled = !isHirocon;
                 teacherNameSelect.disabled = !isHirocon;
 
-                courseNameText.required = !isHirocon;
+                courseNameText.required = !isHirocon && !isHiroka;
+                courseNameText.disabled = isHirocon || isHiroka;
+                courseNameText.style.display = isHiroka ? 'none' : '';
+
+                hirokaCourseNameSelect.required = isHiroka;
+                hirokaCourseNameSelect.disabled = !isHiroka;
+                hirokaCourseNameSelect.style.display = isHiroka ? '' : 'none';
+
                 teacherNameText.required = !isHirocon;
-                courseNameText.disabled = isHirocon;
                 teacherNameText.disabled = isHirocon;
 
                 if (isHirocon) {
                     courseNameText.value = '';
+                    hirokaCourseNameSelect.value = '';
                     teacherNameText.value = '';
                 } else {
                     courseNameSelect.value = '';
                     teacherNameSelect.value = '';
+
+                    if (!isHiroka) {
+                        hirokaCourseNameSelect.value = '';
+                    }
                 }
             }
 
