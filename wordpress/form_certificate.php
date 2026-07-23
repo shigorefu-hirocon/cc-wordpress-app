@@ -685,7 +685,7 @@ add_shortcode('certificate-form', function () {
                     </select>
                 </div>
 
-                <div id="certificate_other_school_fields">
+                <div id="certificate_other_school_fields" class="hidden-section">
                     <label>コース名</label>
                     <select id="certificate_hiroka_course_name_select" name="コース名" style="display: none;">
                         <option value="">選択してください</option>

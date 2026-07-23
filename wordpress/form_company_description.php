@@ -523,7 +523,7 @@ add_shortcode('company_description_form', function () {
                     </select>
                 </div>
 
-                <div id="company_other_school_fields">
+                <div id="company_other_school_fields" class="hidden-section">
                     <label>コース名</label>
                     <select id="company_hiroka_course_name_select" name="コース名" style="display: none;">
                         <option value="">選択してください</option>
