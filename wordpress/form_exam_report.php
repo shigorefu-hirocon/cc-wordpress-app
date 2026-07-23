@@ -879,7 +879,6 @@
                         </select>
                         <select id="biyo_course_name_select" name="コース名" style="display: none;">
                             <option value="">選択してください</option>
-                            <option>美容科</option>
                             <option>トータルビューティ科 ヘアメイクコース</option>
                             <option>トータルビューティ科 メイクアップコース</option>
                             <option>トータルビューティ科 ネイルコース</option>
@@ -1404,7 +1403,7 @@
                 const isUhk = schoolName.value === '広島公務員専門学校';
 
                 setSectionVisibility(hiroconOnlyFields, isHirocon);
-                setSectionVisibility(otherSchoolFields, !isHirocon);
+                setSectionVisibility(otherSchoolFields, isHirocon ? false : Boolean(schoolName.value));
 
                 courseNameSelect.required = isHirocon;
                 teacherNameSelect.required = isHirocon;
