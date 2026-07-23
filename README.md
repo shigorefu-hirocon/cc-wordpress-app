@@ -155,6 +155,7 @@ GAS は以下のスプレッドシートを使用します。
 
 - WordPress 側の GAS endpoint は `script.google.com/macros/.../exec` の URL を PHP 内に保持しています。
 - GAS Web App の redirect が返る場合があるため、WordPress 側では 3xx の `location` を追跡して再取得しています。
+- WordPress のスニペット編集画面では、インライン JavaScript の `&&` が `&#038;&#038;` に変換されることがあります。JavaScript では `&&` を使わず、`!(A || B)` など同等の条件式で記述してください。
 - 同名 PDF が既に Drive フォルダにある場合、既存ファイルは trash へ移動してから新しい PDF を保存します。
 - メール送信は `GmailApp.sendEmail` を使用します。
 - エラーや送信結果はフォーム画面とスプレッドシートの `メール送信レポート` で確認します。

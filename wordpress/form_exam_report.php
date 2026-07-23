@@ -1364,7 +1364,7 @@
                 courseNameSelect.disabled = !isHirocon;
                 teacherNameSelect.disabled = !isHirocon;
 
-                courseNameText.required = !isHirocon && !isHiroka;
+                courseNameText.required = !(isHirocon || isHiroka);
                 courseNameText.disabled = isHirocon || isHiroka;
                 courseNameText.style.display = isHiroka ? 'none' : '';
 
